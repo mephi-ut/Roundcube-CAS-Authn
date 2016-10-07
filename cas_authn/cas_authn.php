@@ -59,6 +59,11 @@ class cas_authn extends rcube_plugin {
         return $_cache_cfg;
     }
 
+    /**
+     * Determine if this plugin should be disable for current request
+     *
+     * @return bool true -- disabled; false -- enabled
+     */
     function isDisabled() {
         $cfg = $this->getCfg();
         if (is_array($cfg['cas_disable_for_domains'])) {
@@ -78,7 +83,7 @@ class cas_authn extends rcube_plugin {
      * these actions need to be handled.
      *
      * @param array $args arguments from rcmail
-* @return array modified arguments
+     * @return array modified arguments
      */
     function startup($args) {
         // intercept PGT callback action from CAS server
