@@ -48,6 +48,15 @@ $rcmail_config['cas_imap_pt_expiration_time'] = 300;
 //     authorized users.
 $rcmail_config['cas_imap_password'] = '';
 
+// Don't authenticate to IMAP using user's username. Use "username*masteruser" instead.
+//     If user's username is "user@example.com" and master's username is "master@example.com"
+//     then the plugin will authenticate using username "user@example.com*master@example.com".
+//     See "http://wiki2.dovecot.org/Authentication/MasterUsers" for more information.
+//     This option is ignored if "cas_proxy" is set to true.
+//
+//     To disable this option -- just comment it out.
+//$rcmail_config['cas_imap_masteruser'] = 'master@example.com';
+
 // CAS server host name.
 $rcmail_config['cas_hostname'] = 'address.of.cas.server';
 

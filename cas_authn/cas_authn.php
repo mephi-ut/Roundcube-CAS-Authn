@@ -113,6 +113,15 @@ class cas_authn extends rcube_plugin {
             }
             else {
                 $pass = $cfg['cas_imap_password'];
+
+                if (!empty($cfg['cas_imap_masteruser'])) {
+                    if (!empty($cfg['username_domain'])) {
+                        $user .= '@'.rcube_utils::parse_host($cfg['username_domain']).'*'.$cfg['cas_imap_masteruser'];
+                        $cfg['username_domain'] = '';
+                    } else {
+                        $user .= '*'.$cfg['cas_imap_masteruser'];
+                    }
+                }
             }
    
             // Do Roundcube login actions
