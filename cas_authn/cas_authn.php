@@ -22,6 +22,7 @@
 class cas_authn extends rcube_plugin {
     
     private $cas_inited;
+    private $_cache_cfg = null;
     
     /**
      * Initialize plugin
@@ -46,8 +47,20 @@ class cas_authn extends rcube_plugin {
         $this->add_hook('template_object_loginform', array($this, 'add_cas_login_html'));
     }
 
+    /**
+     * Gets config and caches
+     *
+     * @return array configuration array
+     */
+    function getCfg() {
+        if (is_null($_cache_cfg)) {
+             $_cache_cfg = rcmail::get_instance()->config->all();
+        }
+        return $_cache_cfg;
+    }
+
     function isDisabled() {
-        $cfg = rcmail::get_instance()->config->all();
+        $cfg = $this->getCfg();
         if (is_array($cfg['cas_disable_for_domains'])) {
             foreach ($cfg['cas_disable_for_domains'] as $domain_pattern) {
                 if (preg_match($domain_pattern, $_SERVER['SERVER_NAME'])) {
@@ -122,7 +135,7 @@ class cas_authn extends rcube_plugin {
             $user = phpCAS::getUser();
             $pass = '';
             // retrieve credentials, either a Proxy Ticket or 'masteruser' password
-            $cfg = rcmail::get_instance()->config->all();
+            $cfg = $this->getCfg();
             if ($cfg['cas_proxy']) {
                 $_SESSION['cas_pt'][php_uname('n')] = phpCAS::retrievePT($cfg['cas_imap_name'], $err_code, $output);
                 $pass = $_SESSION['cas_pt'][php_uname('n')];
@@ -175,7 +188,7 @@ class cas_authn extends rcube_plugin {
      */
     function imap_connect($args) {
         // retrieve configuration
-        $cfg = rcmail::get_instance()->config->all();
+        $cfg = $this->getCfg();
         
         // RoundCube is acting as CAS proxy
         if ($cfg['cas_proxy']) {
@@ -237,7 +250,7 @@ class cas_authn extends rcube_plugin {
      */
     function smtp_connect($args) {
         // retrieve configuration
-        $cfg = rcmail::get_instance()->config->all();
+        $cfg = $this->getCfg();
         
         // RoundCube is acting as CAS proxy and performing SMTP authn
         if ($cfg['cas_proxy'] && $args['smtp_user'] && $args['smtp_pass']) {
@@ -267,7 +280,7 @@ class cas_authn extends rcube_plugin {
      */
     function sieverules_connect($args) {
         // retrieve configuration
-        $cfg = rcmail::get_instance()->config->all();
+        $cfg = $this->getCfg();
 
         // RoundCube is acting as CAS proxy
         if ($cfg['opt_cas_proxy']) {
@@ -293,7 +306,7 @@ class cas_authn extends rcube_plugin {
         $RCMAIL = rcmail::get_instance();
         $this->add_texts('localization');
         // retrieve configuration
-        $cfg = rcmail::get_instance()->config->all();
+        $cfg = $this->getCfg();
     
         // Force CAS authn?
 	if($cfg["cas_force"]) {
@@ -329,7 +342,7 @@ class cas_authn extends rcube_plugin {
 		session_destroy();
 	    }
 
-            $cfg = rcmail::get_instance()->config->all();
+            $cfg = $this->getCfg();
 
             // include phpCAS
             require_once('CAS.php');
@@ -420,7 +433,7 @@ class cas_authn extends rcube_plugin {
                 $delm = '&';
             }
         }
-        $cfg = rcmail::get_instance()->config->all();
+        $cfg = $this->getCfg();
         if ( $cfg['cas_webmail_server_name'] ) {
           $serverName = $cfg['cas_webmail_server_name'];
         } else {
