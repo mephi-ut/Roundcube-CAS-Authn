@@ -9,6 +9,10 @@
 //     the CAS login URL. This means nobody will ever see the RC login page.
 $rcmail_config['cas_force'] = false;
 
+// Disable this plugin for 'SERVER_NAME' that matches to a pattern from the
+//     array:
+$rcmail_config['cas_disable_for_domains'] = array("/nocas\.example\.com/", "/.*\.nocas\.example\.com/");
+
 // whether to act as a CAS proxy. If set to true, a proxy ticket will be
 //     retrieved from the CAS server to be used as password for logging into
 //     the IMAP server. This is the preferred method of authenticating

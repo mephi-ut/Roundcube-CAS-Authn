@@ -33,6 +33,10 @@ class cas_authn extends rcube_plugin {
         
         // load plugin configuration
         $this->load_config();
+
+        if ($this->isDisabled()) {
+            return;
+        }
         
         // add application hooks
         $this->add_hook('startup', array($this, 'startup'));
@@ -40,6 +44,18 @@ class cas_authn extends rcube_plugin {
         $this->add_hook('smtp_connect', array($this, 'smtp_connect'));
         $this->add_hook('sieverules_connect', array($this, 'sieverules_connect'));
         $this->add_hook('template_object_loginform', array($this, 'add_cas_login_html'));
+    }
+
+    function isDisabled() {
+        $cfg = rcmail::get_instance()->config->all();
+        if (is_array($cfg['cas_disable_for_domains'])) {
+            foreach ($cfg['cas_disable_for_domains'] as $domain_pattern) {
+                if (preg_match($domain_pattern, $_SERVER['SERVER_NAME'])) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
