@@ -312,9 +312,11 @@ class cas_authn extends rcube_plugin {
         $this->add_texts('localization');
         // retrieve configuration
         $cfg = $this->getCfg();
+
+        $this->cas_init();
     
         // Force CAS authn?
-	if($cfg["cas_force"]) {
+	if($cfg["cas_force"] && !phpCAS::checkAuthentication()) {
             global $OUTPUT;
             $OUTPUT->redirect(array('action' => 'caslogin'));
         }
